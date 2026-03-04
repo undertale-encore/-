@@ -56,7 +56,7 @@
     padding: 6px 10px;
     border-radius: 4px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     cursor: pointer;
     border: 1px solid transparent;
   }
@@ -69,7 +69,7 @@
     height: 48px;
     border-radius: 6px;
     border: 2px solid #103070;
-    margin-right: 10px;
+    margin-bottom: 4px;
     object-fit: cover;
   }
   .user-name {
@@ -77,16 +77,24 @@
     font-weight: 600;
     color: white;
   }
-  .user-actions button {
-    background: #72A0F9;
+
+  /* Botones pequeños encima de cada usuario */
+  .user-controls {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+    margin-bottom: 4px;
+  }
+  .user-controls button {
+    font-size: 0.7rem;
+    padding: 2px 4px;
+    border-radius: 3px;
     border: 1px solid #A2C6FF;
+    background: #72A0F9;
     color: white;
-    font-size: 0.9rem;
-    padding: 2px 5px;
-    border-radius: 4px;
     cursor: pointer;
   }
-  .user-actions button:hover {
+  .user-controls button:hover {
     background: #A2C6FF;
     color: #234A93;
   }
@@ -196,7 +204,6 @@
     animation: flicker 0.15s infinite alternate;
   }
 
-  /* Pequeño ruido/scan flicker */
   @keyframes flicker {
     0% {
       opacity: 0.06;
@@ -302,30 +309,67 @@ function renderUsers(){
   accounts.forEach((acc, i) => {
     const div = document.createElement("div");
     div.className = "user-item";
+
     div.innerHTML = `
+      <div class="user-controls">
+        <button class="btn-remove-screen">🗑️ Quitar</button>
+        <button class="btn-edit">✏️ Editar</button>
+      </div>
       <img src="${acc.image}" alt="Foto de ${acc.name}" />
       <div class="user-name">${acc.name}</div>
-      <div class="user-actions" style="margin-left:auto; display:flex; gap:4px;">
-        <button class="edit-btn">✏️</button>
-        <button class="remove-btn">❌</button>
-      </div>
     `;
 
-    // Login al hacer click
+    // Login al hacer click en la imagen o nombre
     div.querySelector(".user-name").parentNode.onclick = (e) => {
       if(e.target.tagName !== 'BUTTON') login(i);
     };
 
-    // Editar usuario
-    div.querySelector(".edit-btn").onclick = (e) => {
+    // Quitar de la pantalla
+    div.querySelector(".btn-remove-screen").onclick = (e) => {
       e.stopPropagation();
-      editUser(i);
+      accounts.splice(i, 1); // solo quita de la vista
+      localStorage.setItem("accounts", JSON.stringify(accounts));
+      renderUsers();
+      alert(`Cuenta de ${acc.name} retirada de la pantalla. Puedes añadir otra.`);
     };
 
-    // Quitar usuario de la pantalla
-    div.querySelector(".remove-btn").onclick = (e) => {
+    // Editar usuario
+    div.querySelector(".btn-edit").onclick = (e) => {
       e.stopPropagation();
-      removeUser(i);
+      const password = prompt(`Introduce la contraseña de ${acc.name} para editar:`);
+      if(password !== acc.pass){
+        alert("Contraseña incorrecta.");
+        return;
+      }
+      inputEmail.value = acc.gmail; 
+      inputEmail.disabled = true;
+      inputName.value = acc.name;
+      imgPreview.src = acc.image;
+      imgPreview.style.display = "block";
+      modalBg.style.display = "flex";
+
+      btnCreate.onclick = () => {
+        const name = inputName.value.trim();
+        const imageSrc = imgPreview.src;
+
+        if(!name){
+          alert("El nombre no puede estar vacío.");
+          return;
+        }
+
+        if(!imageSrc || imageSrc === ""){
+          alert("Selecciona una imagen de perfil.");
+          return;
+        }
+
+        accounts[i].name = name;
+        accounts[i].image = imageSrc;
+        localStorage.setItem("accounts", JSON.stringify(accounts));
+        modalBg.style.display = "none";
+        inputEmail.disabled = false;
+        renderUsers();
+        resetModal();
+      };
     };
 
     usersList.appendChild(div);
@@ -363,7 +407,7 @@ let createAccountHandler = () => {
   }
 
   if(accounts.length >= 3){
-    alert("Solo se permiten 3 cuentas.");
+    alert("Solo se permiten 3 cuentas visibles.");
     return;
   }
 
@@ -425,61 +469,34 @@ btnGuest.onclick = () => {
   alert("Entrando como Invitado...");
 };
 
-// ---------- NUEVAS FUNCIONES ----------
-function editUser(index){
-  const acc = accounts[index];
-  inputEmail.value = acc.gmail; // no editable
-  inputEmail.disabled = true;
-  inputName.value = acc.name;
-  imgPreview.src = acc.image;
-  imgPreview.style.display = "block";
-  modalBg.style.display = "flex";
-
-  btnCreate.onclick = () => {
-    const name = inputName.value.trim();
-    const imageSrc = imgPreview.src;
-
-    if(!name){
-      alert("El nombre no puede estar vacío.");
-      return;
-    }
-
-    if(!imageSrc || imageSrc === ""){
-      alert("Selecciona una imagen de perfil.");
-      return;
-    }
-
-    accounts[index].name = name;
-    accounts[index].image = imageSrc;
-    localStorage.setItem("accounts", JSON.stringify(accounts));
-    modalBg.style.display = "none";
-    inputEmail.disabled = false;
-    renderUsers();
-    resetModal();
-  };
-}
-
-function removeUser(index){
-  const removed = accounts.splice(index, 1)[0];
-  localStorage.setItem("accounts", JSON.stringify(accounts));
-  renderUsers();
-  alert(`Cuenta de ${removed.name} removida de la pantalla.`);
-}
-
 // Añadir cuenta existente
 btnAddExisting.onclick = () => {
   const gmail = prompt("Introduce el Gmail de la cuenta existente:");
   if(!gmail) return;
 
+  const password = prompt("Introduce la contraseña de la cuenta:");
+  if(!password) return;
+
   const allAccounts = JSON.parse(localStorage.getItem("accounts") || "[]");
   const account = allAccounts.find(a => a.gmail === gmail.toLowerCase());
+
   if(!account){
     alert("No existe una cuenta con ese Gmail.");
     return;
   }
 
+  if(account.pass !== password){
+    alert("Contraseña incorrecta.");
+    return;
+  }
+
   if(accounts.some(a => a.gmail === account.gmail)){
     alert("La cuenta ya está en la lista.");
+    return;
+  }
+
+  if(accounts.length >= 3){
+    alert("No se pueden agregar más de 3 cuentas visibles.");
     return;
   }
 
