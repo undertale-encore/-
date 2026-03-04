@@ -504,4 +504,129 @@ function renderUsers(){
 
         accounts[i].name = name;
         accounts[i].image = imageSrc;
-        localStorage.setItem("accounts",
+        localStorage.setItem("accounts", JSON.stringify(accounts));
+        modalBg.style.display = "none";
+        renderUsers();
+        resetModal();
+      };
+    };
+
+    usersList.appendChild(div);
+  });
+
+  btnAddAccount.style.display = accounts.length >= 3 ? "none" : "block";
+}
+
+function openLoginScreen(index){
+  selectedUserIndex = index;
+  const acc = accounts[index];
+  loginUserImage.src = acc.image;
+  loginUserName.textContent = acc.name;
+  loginPasswordInput.value = "";
+  loginErrorMessage.textContent = "";
+  loginPasswordInput.focus();
+  document.querySelector(".users-list").style.display = "none";
+  document.querySelector(".bottom-buttons").style.display = "none";
+  document.querySelector(".title").style.display = "none";
+  loginPasswordScreen.classList.add("active");
+}
+
+btnLoginConfirm.onclick = () => {
+  if(selectedUserIndex === null) return;
+
+  const inputPass = loginPasswordInput.value;
+  if(inputPass === accounts[selectedUserIndex].pass){
+    alert(`Bienvenido ${accounts[selectedUserIndex].name}!`);
+    // Aquí podrías hacer redirección o continuar con sesión
+  } else {
+    loginErrorMessage.textContent = "Contraseña incorrecta.";
+    errorSound.play();
+  }
+};
+
+btnBackToUsers.onclick = () => {
+  loginPasswordScreen.classList.remove("active");
+  document.querySelector(".users-list").style.display = "block";
+  document.querySelector(".bottom-buttons").style.display = "flex";
+  document.querySelector(".title").style.display = "block";
+  loginErrorMessage.textContent = "";
+  loginPasswordInput.value = "";
+  selectedUserIndex = null;
+};
+
+// ---------- MODAL CREAR CUENTA ----------
+let createAccountHandler = () => {
+  const gmail = prompt("Introduce Gmail para nueva cuenta:");
+  if(!gmail || !validateEmail(gmail)){
+    alert("Email no válido.");
+    return;
+  }
+  if(accounts.some(a => a.gmail === gmail.toLowerCase())){
+    alert("Ese Gmail ya está registrado.");
+    return;
+  }
+  const pass = prompt("Introduce contraseña para la cuenta:");
+  if(!pass){
+    alert("Contraseña no puede estar vacía.");
+    return;
+  }
+  const confirmPass = prompt("Confirma la contraseña:");
+  if(pass !== confirmPass){
+    alert("Las contraseñas no coinciden.");
+    return;
+  }
+  const name = prompt("Introduce el nombre para mostrar:");
+  if(!name){
+    alert("El nombre no puede estar vacío.");
+    return;
+  }
+  // Imagen genérica por defecto
+  const defaultImage = "https://i.imgur.com/0NvjkmK.png"; // imagen pixel verde (puedes cambiar)
+
+  if(accounts.length >= 3){
+    alert("Solo se permiten 3 cuentas visibles.");
+    return;
+  }
+
+  accounts.push({ gmail: gmail.toLowerCase(), name, pass, image: defaultImage });
+  localStorage.setItem("accounts", JSON.stringify(accounts));
+  renderUsers();
+};
+
+btnAddAccount.onclick = () => {
+  createAccountHandler();
+};
+
+btnGuest.onclick = () => {
+  alert("Entrando como Invitado...");
+};
+
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function resetModal(){
+  inputName.value = "";
+  inputImage.value = "";
+  imgPreview.style.display = "none";
+  btnCreate.onclick = createAccountHandler;
+}
+
+// Manejo cambio imagen en modal
+inputImage.onchange = (e) => {
+  const file = e.target.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      imgPreview.src = ev.target.result;
+      imgPreview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+renderUsers();
+</script>
+
+</body>
+</html>
