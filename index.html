@@ -2,44 +2,53 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<title>Inicio Sesión Retro XP con CRT</title>
+<title>Inicio Sesión Retro Consola CMD con CRT</title>
 <style>
-  /* Fondo y diseño general */
+  /* Fondo y diseño general - fondo negro con verde */
   body {
-    margin:0; padding:0;
-    background: linear-gradient(to bottom, #316AC5 0%, #7FA9EB 100%);
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    color: white;
+    margin: 0; padding: 0;
+    background: #001100;
+    font-family: 'Courier New', Courier, monospace;
+    color: #33FF33;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
     overflow: hidden;
+    image-rendering: pixelated; /* pixelado */
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   /* Contenedor principal */
   .login-box {
-    background: #234A93;
-    width: 350px;
-    height: 500px;
-    border: 2px solid #103070;
-    box-shadow: 0 0 15px #1B356B;
+    background: #002200cc;
+    border: 2px solid #006600;
+    width: 360px;
+    min-height: 500px;
     border-radius: 6px;
+    box-shadow: 0 0 20px #009900aa;
     display: flex;
     flex-direction: column;
     padding: 20px;
     box-sizing: border-box;
     position: relative;
     z-index: 1;
+    filter: contrast(1.2) brightness(1.1);
   }
 
-  /* Título */
+  /* Título pixelado y neón */
   .title {
     text-align: center;
     font-weight: bold;
-    font-size: 1.4rem;
-    margin-bottom: 10px;
+    font-size: 1.6rem;
+    margin-bottom: 12px;
+    color: #22FF22;
+    text-shadow:
+      0 0 2px #22FF22,
+      0 0 8px #22FF22;
+    letter-spacing: 0.12em;
   }
 
   /* Lista de usuarios */
@@ -47,127 +56,158 @@
     flex-grow: 1;
     overflow-y: auto;
     margin-bottom: 15px;
+    image-rendering: pixelated;
   }
 
-  /* Cada usuario */
+  /* Cada usuario estilo consola */
   .user-item {
-    background: #316AC5;
+    background: #003300;
     margin-bottom: 8px;
     padding: 6px 10px;
     border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #006600;
     display: flex;
     flex-direction: column;
-    cursor: pointer;
-    border: 1px solid transparent;
+    user-select: none;
   }
   .user-item:hover {
-    background: #72A0F9;
-    border-color: #A2C6FF;
+    background: #005500;
+    border-color: #00AA00;
   }
   .user-item img {
     width: 48px;
     height: 48px;
     border-radius: 6px;
-    border: 2px solid #103070;
+    border: 1px solid #006600;
     margin-bottom: 4px;
     object-fit: cover;
+    filter: drop-shadow(0 0 1px #33FF33);
+    image-rendering: pixelated;
   }
   .user-name {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #33FF33;
+    text-shadow:
+      0 0 1px #33FF33,
+      0 0 6px #22CC22;
   }
 
   /* Botones pequeños encima de cada usuario */
   .user-controls {
     display: flex;
-    gap: 4px;
+    gap: 6px;
     justify-content: flex-end;
     margin-bottom: 4px;
   }
   .user-controls button {
-    font-size: 0.7rem;
-    padding: 2px 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    padding: 3px 5px;
     border-radius: 3px;
-    border: 1px solid #A2C6FF;
-    background: #72A0F9;
-    color: white;
+    border: 1px solid #00AA00;
+    background: #004400;
+    color: #33FF33;
     cursor: pointer;
+    user-select: none;
+    box-shadow: 0 0 4px #00FF00;
+    transition: background 0.2s, color 0.2s;
   }
   .user-controls button:hover {
-    background: #A2C6FF;
-    color: #234A93;
+    background: #22FF22;
+    color: #002200;
+    border-color: #22FF22;
+    box-shadow: 0 0 10px #22FF22;
   }
 
   /* Botones inferiores */
   .bottom-buttons {
-    border-top: 1px solid #103070;
+    border-top: 1px solid #006600;
     padding-top: 10px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
   }
   button {
-    background: #316AC5;
-    border: 1px solid #103070;
-    color: white;
+    font-family: 'Courier New', monospace;
+    background: #003300;
+    border: 1px solid #006600;
+    color: #33FF33;
     font-weight: bold;
-    font-size: 1rem;
-    padding: 8px 0;
+    font-size: 1.1rem;
+    padding: 10px 0;
     border-radius: 4px;
     cursor: pointer;
+    box-shadow: 0 0 6px #00FF00;
+    user-select: none;
+    transition: background 0.3s, color 0.3s;
   }
   button:hover {
-    background: #72A0F9;
-    border-color: #A2C6FF;
+    background: #00FF00;
+    color: #001100;
+    border-color: #00FF00;
+    box-shadow: 0 0 20px #00FF00;
   }
 
-  /* Modal para registro */
+  /* Modal editar cuenta */
   .modal-bg {
     position: fixed;
     top:0; left:0; right:0; bottom:0;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 25, 0, 0.9);
     display:none;
     justify-content: center;
     align-items: center;
     z-index: 10;
   }
   .modal {
-    background: #234A93;
+    background: #002200cc;
     border-radius: 6px;
     padding: 20px;
     width: 320px;
-    color: white;
-    box-shadow: 0 0 20px #1B356B;
+    color: #33FF33;
+    box-shadow:
+      0 0 10px #00FF00,
+      inset 0 0 6px #00FF00;
+    font-family: 'Courier New', monospace;
   }
   .modal h2 {
     margin-top:0;
     margin-bottom: 15px;
-  }
-  .modal input {
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #103070;
-    background: #316AC5;
-    color: white;
-    font-size: 1rem;
-  }
-  .modal input::placeholder {
-    color: #c9d1ffcc;
+    font-weight: bold;
+    text-shadow: 0 0 4px #00FF00;
+    color: #00FF00;
+    letter-spacing: 0.1em;
   }
   .modal label {
     display: block;
     margin-bottom: 6px;
   }
+  .modal input[type="text"],
+  .modal input[type="file"] {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 8px;
+    border-radius: 3px;
+    border: 1px solid #004400;
+    background: #003300;
+    color: #33FF33;
+    font-size: 1rem;
+    font-family: 'Courier New', monospace;
+    box-shadow: inset 0 0 3px #00FF00;
+  }
+  .modal input::placeholder {
+    color: #33FF3366;
+  }
   .modal .img-preview {
     width: 80px;
     height: 80px;
-    border-radius: 8px;
-    border: 2px solid #103070;
+    border-radius: 6px;
+    border: 1px solid #004400;
     margin-bottom: 10px;
     object-fit: cover;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 0 3px #00FF00);
   }
   .modal-buttons {
     display: flex;
@@ -175,14 +215,105 @@
   }
   .modal button {
     width: 48%;
+    background: #004400;
+    border: 1px solid #00FF00;
+    color: #33FF33;
+    font-weight: bold;
+    box-shadow: 0 0 8px #00FF00;
   }
-  /* Scrollbar para lista usuarios */
+  .modal button:hover {
+    background: #00FF00;
+    color: #001100;
+  }
+
+  /* Login password screen estilo consola */
+  .login-password-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 100%;
+    width: 100%;
+  }
+  .login-password-screen.active {
+    display: flex;
+  }
+  .login-password-screen img {
+    width: 96px;
+    height: 96px;
+    border-radius: 12px;
+    border: 1px solid #006600;
+    margin-bottom: 12px;
+    object-fit: cover;
+    filter: drop-shadow(0 0 4px #33FF33);
+    image-rendering: pixelated;
+  }
+  .login-password-screen .user-name {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #00FF00;
+    text-shadow: 0 0 6px #00FF00;
+    letter-spacing: 0.1em;
+  }
+  .login-password-screen input[type="password"] {
+    padding: 12px;
+    width: 260px;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    border: 2px solid #006600;
+    background: #003300;
+    color: #33FF33;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    box-shadow: inset 0 0 8px #00FF00;
+  }
+  .login-password-screen input::placeholder {
+    color: #33FF3366;
+  }
+  .login-password-screen .error-message {
+    color: #ff4c4c;
+    font-weight: bold;
+    margin-bottom: 6px;
+    height: 18px;
+    text-shadow: 0 0 3px #ff0000;
+  }
+  .login-password-screen button {
+    width: 260px;
+    background: #003300;
+    border: 1px solid #006600;
+    color: #33FF33;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    box-shadow: 0 0 8px #00FF00;
+    cursor: pointer;
+    user-select: none;
+  }
+  .login-password-screen button:hover {
+    background: #00FF00;
+    color: #001100;
+    border-color: #00FF00;
+    box-shadow: 0 0 20px #00FF00;
+  }
+  .login-password-screen .btn-back {
+    background: #002200;
+    border: 1px solid #004400;
+    margin-top: 8px;
+  }
+  .login-password-screen .btn-back:hover {
+    background: #004400;
+    color: #00FF00;
+  }
+
+  /* Scrollbar verde estilo consola */
   .users-list::-webkit-scrollbar {
     width: 6px;
   }
   .users-list::-webkit-scrollbar-thumb {
-    background: #103070;
+    background: #004400;
     border-radius: 3px;
+    box-shadow: inset 0 0 3px #00FF00;
   }
 
   /* -------------------- */
@@ -242,11 +373,10 @@
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     border-radius: 15px;
-    box-shadow: inset 0 0 40px 20px rgba(0,255,0,0.1);
+    box-shadow: inset 0 0 40px 20px rgba(0,255,0,0.15);
     mix-blend-mode: screen;
     z-index: 999;
   }
-
 </style>
 </head>
 <body>
@@ -256,28 +386,31 @@
   <div class="users-list" id="usersList"></div>
   <div class="bottom-buttons">
     <button id="btnAddAccount">Añadir cuenta</button>
-    <button id="btnAddExisting">Añadir cuenta existente</button>
     <button id="btnGuest">Entrar como Invitado</button>
+  </div>
+
+  <!-- Pantalla para pedir contraseña -->
+  <div class="login-password-screen" id="loginPasswordScreen">
+    <img id="loginUserImage" src="" alt="Foto de usuario" />
+    <div class="user-name" id="loginUserName"></div>
+    <div class="error-message" id="loginErrorMessage"></div>
+    <input type="password" id="loginPasswordInput" placeholder="Contraseña" autocomplete="off" />
+    <button id="btnLoginConfirm">Ingresar</button>
+    <button id="btnBackToUsers" class="btn-back">Volver</button>
   </div>
 </div>
 
-<!-- Modal Registro -->
+<!-- Modal editar cuenta -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
-    <h2>Crear Nueva Cuenta</h2>
-    <label for="inputEmail">Gmail</label>
-    <input type="email" id="inputEmail" placeholder="usuario@gmail.com" />
+    <h2>Editar Cuenta</h2>
     <label for="inputName">Nombre</label>
     <input type="text" id="inputName" placeholder="Nombre para mostrar" />
     <label for="inputImage">Imagen de perfil</label>
     <input type="file" id="inputImage" accept="image/*" />
     <img src="" alt="Previsualización" class="img-preview" id="imgPreview" style="display:none" />
-    <label for="inputPass">Contraseña</label>
-    <input type="password" id="inputPass" placeholder="Contraseña" />
-    <label for="inputConfirmPass">Confirmar contraseña</label>
-    <input type="password" id="inputConfirmPass" placeholder="Confirmar contraseña" />
     <div class="modal-buttons">
-      <button id="btnCreate">Crear</button>
+      <button id="btnCreate">Guardar</button>
       <button id="btnCancel">Cancelar</button>
     </div>
   </div>
@@ -287,22 +420,31 @@
 <div class="crt-overlay"></div>
 <div class="crt-glow"></div>
 
+<audio id="errorSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+
 <script>
 let accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
 
 const usersList = document.getElementById("usersList");
 const btnAddAccount = document.getElementById("btnAddAccount");
-const btnAddExisting = document.getElementById("btnAddExisting");
 const btnGuest = document.getElementById("btnGuest");
 const modalBg = document.getElementById("modalBg");
-const inputEmail = document.getElementById("inputEmail");
 const inputName = document.getElementById("inputName");
 const inputImage = document.getElementById("inputImage");
 const imgPreview = document.getElementById("imgPreview");
-const inputPass = document.getElementById("inputPass");
-const inputConfirmPass = document.getElementById("inputConfirmPass");
 const btnCreate = document.getElementById("btnCreate");
 const btnCancel = document.getElementById("btnCancel");
+
+const loginPasswordScreen = document.getElementById("loginPasswordScreen");
+const loginUserImage = document.getElementById("loginUserImage");
+const loginUserName = document.getElementById("loginUserName");
+const loginPasswordInput = document.getElementById("loginPasswordInput");
+const loginErrorMessage = document.getElementById("loginErrorMessage");
+const btnLoginConfirm = document.getElementById("btnLoginConfirm");
+const btnBackToUsers = document.getElementById("btnBackToUsers");
+const errorSound = document.getElementById("errorSound");
+
+let selectedUserIndex = null;
 
 function renderUsers(){
   usersList.innerHTML = "";
@@ -312,19 +454,19 @@ function renderUsers(){
 
     div.innerHTML = `
       <div class="user-controls">
-        <button class="btn-remove-screen">🗑️ Quitar</button>
-        <button class="btn-edit">✏️ Editar</button>
+        <button class="btn-remove-screen" title="Quitar usuario">🗑️</button>
+        <button class="btn-edit" title="Editar usuario">✏️</button>
       </div>
       <img src="${acc.image}" alt="Foto de ${acc.name}" />
       <div class="user-name">${acc.name}</div>
     `;
 
-    // Login al hacer click en la imagen o nombre
+    // Al hacer click en usuario (imagen o nombre) abrir pantalla de contraseña
     div.querySelector(".user-name").parentNode.onclick = (e) => {
-      if(e.target.tagName !== 'BUTTON') login(i);
+      if(e.target.tagName !== 'BUTTON') openLoginScreen(i);
     };
 
-    // Quitar de la pantalla
+    // Quitar de la pantalla (solo quita, no borra)
     div.querySelector(".btn-remove-screen").onclick = (e) => {
       e.stopPropagation();
       accounts.splice(i, 1); // solo quita de la vista
@@ -333,7 +475,7 @@ function renderUsers(){
       alert(`Cuenta de ${acc.name} retirada de la pantalla. Puedes añadir otra.`);
     };
 
-    // Editar usuario
+    // Editar usuario (pide contraseña para confirmar)
     div.querySelector(".btn-edit").onclick = (e) => {
       e.stopPropagation();
       const password = prompt(`Introduce la contraseña de ${acc.name} para editar:`);
@@ -341,8 +483,6 @@ function renderUsers(){
         alert("Contraseña incorrecta.");
         return;
       }
-      inputEmail.value = acc.gmail; 
-      inputEmail.disabled = true;
       inputName.value = acc.name;
       imgPreview.src = acc.image;
       imgPreview.style.display = "block";
@@ -364,161 +504,4 @@ function renderUsers(){
 
         accounts[i].name = name;
         accounts[i].image = imageSrc;
-        localStorage.setItem("accounts", JSON.stringify(accounts));
-        modalBg.style.display = "none";
-        inputEmail.disabled = false;
-        renderUsers();
-        resetModal();
-      };
-    };
-
-    usersList.appendChild(div);
-  });
-
-  btnAddAccount.style.display = accounts.length >= 3 ? "none" : "block";
-}
-
-// ---------- MODAL CREAR CUENTA ----------
-let createAccountHandler = () => {
-  const gmail = inputEmail.value.trim().toLowerCase();
-  const name = inputName.value.trim();
-  const pass = inputPass.value;
-  const confirmPass = inputConfirmPass.value;
-  const imageSrc = imgPreview.src;
-
-  if(!gmail || !name || !pass || !confirmPass){
-    alert("Completa todos los campos.");
-    return;
-  }
-
-  if(!validateEmail(gmail)){
-    alert("Email no válido.");
-    return;
-  }
-
-  if(pass !== confirmPass){
-    alert("Las contraseñas no coinciden.");
-    return;
-  }
-
-  if(accounts.some(a => a.gmail === gmail)){
-    alert("Ese Gmail ya está registrado.");
-    return;
-  }
-
-  if(accounts.length >= 3){
-    alert("Solo se permiten 3 cuentas visibles.");
-    return;
-  }
-
-  if(!imageSrc || imageSrc === ""){
-    alert("Selecciona una imagen de perfil.");
-    return;
-  }
-
-  accounts.push({ gmail, name, pass, image: imageSrc });
-  localStorage.setItem("accounts", JSON.stringify(accounts));
-  modalBg.style.display = "none";
-  renderUsers();
-  resetModal();
-};
-
-btnCreate.onclick = createAccountHandler;
-
-btnAddAccount.onclick = () => {
-  resetModal();
-  modalBg.style.display = "flex";
-};
-
-btnCancel.onclick = () => {
-  modalBg.style.display = "none";
-};
-
-// Cambiar imagen
-inputImage.onchange = (e) => {
-  const file = e.target.files[0];
-  if(file){
-    const reader = new FileReader();
-    reader.onload = function(ev){
-      imgPreview.src = ev.target.result;
-      imgPreview.style.display = "block";
-    };
-    reader.readAsDataURL(file);
-  } else {
-    imgPreview.style.display = "none";
-    imgPreview.src = "";
-  }
-};
-
-// ---------- FUNCIONES UTILES ----------
-function validateEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function login(index){
-  const pass = prompt(`Contraseña para ${accounts[index].name}:`);
-  if(pass === null) return;
-  if(pass === accounts[index].pass){
-    alert(`Bienvenido ${accounts[index].name}!`);
-  } else {
-    alert("Contraseña incorrecta.");
-  }
-}
-
-btnGuest.onclick = () => {
-  alert("Entrando como Invitado...");
-};
-
-// Añadir cuenta existente
-btnAddExisting.onclick = () => {
-  const gmail = prompt("Introduce el Gmail de la cuenta existente:");
-  if(!gmail) return;
-
-  const password = prompt("Introduce la contraseña de la cuenta:");
-  if(!password) return;
-
-  const allAccounts = JSON.parse(localStorage.getItem("accounts") || "[]");
-  const account = allAccounts.find(a => a.gmail === gmail.toLowerCase());
-
-  if(!account){
-    alert("No existe una cuenta con ese Gmail.");
-    return;
-  }
-
-  if(account.pass !== password){
-    alert("Contraseña incorrecta.");
-    return;
-  }
-
-  if(accounts.some(a => a.gmail === account.gmail)){
-    alert("La cuenta ya está en la lista.");
-    return;
-  }
-
-  if(accounts.length >= 3){
-    alert("No se pueden agregar más de 3 cuentas visibles.");
-    return;
-  }
-
-  accounts.push(account);
-  localStorage.setItem("accounts", JSON.stringify(accounts));
-  renderUsers();
-};
-
-// Reset modal
-function resetModal(){
-  inputEmail.value = "";
-  inputEmail.disabled = false;
-  inputName.value = "";
-  inputImage.value = "";
-  imgPreview.style.display = "none";
-  inputPass.value = "";
-  inputConfirmPass.value = "";
-  btnCreate.onclick = createAccountHandler;
-}
-
-renderUsers();
-</script>
-
-</body>
-</html>
+        localStorage.setItem("accounts",
